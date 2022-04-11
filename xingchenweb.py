@@ -3,7 +3,7 @@
 Liyao Zhang
 
 Start Date 4/4/2022
-Last Edit 4/4/2022
+Last Edit 4/12/2022
 
 星辰智盈自动回测系统 with Streamlit V2.0
 
@@ -25,7 +25,7 @@ def main():
         file = st.file_uploader("上传数据库文件", type='xlsx')
         opt1 = st.checkbox("统计历史胜率", value=False)
     elif source == 'OneDrive':
-        num_show = st.number_input('数据显示行数', min_value=1, max_value=100, value=10, key='show')
+        num_show = st.number_input('数据显示行数', min_value=1, max_value=100, value=20, key='show')
     run = st.button('运行')
     
     if source == 'OneDrive' and path and run:
@@ -40,8 +40,7 @@ def main():
         with st.spinner("加载数据中..."):
             df = read_file(file)
         search(df, path, opt1)
-        st.success('已导出结果文件至'+path)
-        
+        st.success('已导出结果文件至'+path)   
 
 # *** 连接层函数 *** #    
 def create_onedrive_directdownload(onedrive_link):
@@ -76,12 +75,12 @@ def calc_prob(home, away, deep, result, total):
     p_los = (len(result[result['H'] <result['A']])/total)*100
     if home and deep:
         p_h2 = (len(result[(result['H']-result['A']) > 1])/total)*100
-        print("主胜占比:",round(p_win,2),'%',"平局占比:",round(p_tie,2),'%',"客胜占比:",round(p_los,2),'%',"主队赢得两球及以上占比:",round(p_h2,2),'%')
+        st.write("主胜占比:",round(p_win,2),'%',"平局占比:",round(p_tie,2),'%',"客胜占比:",round(p_los,2),'%',"主队赢得两球及以上占比:",round(p_h2,2),'%')
     elif away and deep:
         p_a2 = (len(result[(result['A']-result['H']) > 1])/total)*100
-        print("主胜占比:",round(p_win,2),'%',"平局占比:",round(p_tie,2),'%',"客胜占比:",round(p_los,2),'%',"客队赢得两球及以上占比:",round(p_a2,2),'%')
+        st.write("主胜占比:",round(p_win,2),'%',"平局占比:",round(p_tie,2),'%',"客胜占比:",round(p_los,2),'%',"客队赢得两球及以上占比:",round(p_a2,2),'%')
     else:
-        print("主胜占比:",round(p_win,2),'%',"平局占比:",round(p_tie,2),'%',"客胜占比:",round(p_los,2),'%')
+        st.write("主胜占比:",round(p_win,2),'%',"平局占比:",round(p_tie,2),'%',"客胜占比:",round(p_los,2),'%')
     #主让上盘方向    
     if home and not deep and p_win > (p_tie+p_los):
         miss = 0
@@ -92,7 +91,7 @@ def calc_prob(home, away, deep, result, total):
                 else:
                     miss = 0
             if miss > 1:
-                print("提示：主队赢盘遗漏",miss,"场")
+                st.write("提示：主队赢盘遗漏",miss,"场")
         return p_win, 'home', miss
     #主让下盘方向
     elif home and not deep and p_win <= (p_tie+p_los):
@@ -104,7 +103,7 @@ def calc_prob(home, away, deep, result, total):
                 else:
                     miss = 0
             if miss > 1:
-                print("提示：客队赢盘遗漏",miss,"场")
+                st.write("提示：客队赢盘遗漏",miss,"场")
         return p_tie+p_los, 'away', miss
     #客让上盘方向
     elif away and not deep and p_los > (p_tie+p_win):
@@ -116,7 +115,7 @@ def calc_prob(home, away, deep, result, total):
                 else:
                     miss = 0
             if miss > 1:
-                print("提示：客队赢盘遗漏",miss,"场")
+                st.write("提示：客队赢盘遗漏",miss,"场")
         return p_los, 'away', miss
     #客让下盘方向
     elif away and not deep and p_los <= (p_tie+p_win):
@@ -128,7 +127,7 @@ def calc_prob(home, away, deep, result, total):
                 else:
                     miss = 0
             if miss > 1:
-                print("提示：主队赢盘遗漏",miss,"场")
+                st.write("提示：主队赢盘遗漏",miss,"场")
         return p_win+p_tie, 'home', miss
     #深盘主让上盘方向
     elif home and deep and p_h2 > 50:
@@ -140,7 +139,7 @@ def calc_prob(home, away, deep, result, total):
                 else:
                     miss = 0
             if miss > 1:
-                print("提示：主队赢盘遗漏",miss,"场")
+                st.write("提示：主队赢盘遗漏",miss,"场")
         return p_h2, 'home', miss
     #深盘主让下盘方向
     elif home and deep and p_h2 <= 50:
@@ -152,7 +151,7 @@ def calc_prob(home, away, deep, result, total):
                 else:
                     miss = 0
             if miss > 1:
-                print("提示：客队赢盘遗漏",miss,"场")
+                st.write("提示：客队赢盘遗漏",miss,"场")
         return 100-p_h2, 'away', miss        
     #深盘客让上盘方向
     elif away and deep and p_a2 > 50:
@@ -164,7 +163,7 @@ def calc_prob(home, away, deep, result, total):
                 else:
                     miss = 0
             if miss > 1:
-                print("提示：客队赢盘遗漏",miss,"场")
+                st.write("提示：客队赢盘遗漏",miss,"场")
         return p_a2, 'away', miss
     #深盘客让下盘方向
     elif away and deep and p_a2 <= 50:
@@ -176,7 +175,7 @@ def calc_prob(home, away, deep, result, total):
                 else:
                     miss = 0
             if miss > 1:
-                print("提示：主队赢盘遗漏",miss,"场")
+                st.write("提示：主队赢盘遗漏",miss,"场")
         return 100-p_a2, 'home', miss
 
 # 对预估概率进行修正
@@ -286,6 +285,8 @@ def search(df, path, opt1):
     history = False
     if opt1:
         history = True
+    dfb = pd.DataFrame(columns=['联赛','比赛','让球方','盘口','模型','平均概率','最长遗漏','高频比分','频率','算法数量','正误','注释'])    
+    
     #创建新工作簿以写入结果
     wb = xlsxwriter.Workbook(path+'\\result.xlsx')
     worksheet = wb.add_worksheet("My sheet")
@@ -378,13 +379,13 @@ def search(df, path, opt1):
                 
                 if avg_best >= 60 and uppr_count[2] > 0:
                     worksheet.write(x, y+4, '新发现！！！五星级上盘模型') 
-                    print('新发现！！！五星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！！！五星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and uppr_count[1] > 0:
                     worksheet.write(x, y+4, '新发现！！四星级上盘模型')
-                    print('新发现！！四星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！！四星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((uppr_count[0] > 1) or (uppr_count[1] > 0) or (uppr_count[2] > 0)):
                     worksheet.write(x, y+4, '新发现！三星级上盘模型')
-                    print('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 x += 1
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
@@ -420,15 +421,15 @@ def search(df, path, opt1):
                     
                 if avg_best >= 60 and down_count[2] > 0:
                     worksheet.write(x, y+4, '新发现！！！五星级下盘模型')                    
-                    print('新发现！！！五星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！！！五星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and down_count[1] > 0:
                     worksheet.write(x, y+4, '新发现！！四星级下盘模型')
-                    print('新发现！！四星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！！四星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((down_count[0] > 1) or (down_count[1] > 0) or (down_count[2] > 0)):
                     worksheet.write(x, y+4, '新发现！三星级下盘模型')
-                    print('新发现！三星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！三星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 x += 1
-            print('=============================================')
+            st.write('=============================================')
             #重置上一场比赛信息
             algo = 1
             score = []
@@ -467,15 +468,15 @@ def search(df, path, opt1):
             deep = True
 
         if home:
-            print("正在分析:",row['联赛'],row['比赛'],row['算法'],'主队让球:',row['盘口'],"\n")
+            st.write("正在分析:",row['联赛'],row['比赛'],row['算法'],'主队让球:',row['盘口'],"\n")
         elif away:
-            print("正在分析:",row['联赛'],row['比赛'],row['算法'],'客队让球:',row['盘口'],"\n")
+            st.write("正在分析:",row['联赛'],row['比赛'],row['算法'],'客队让球:',row['盘口'],"\n")
             
         #第0轮筛选 胜平负
         result0 = df[(df['H'].notnull()) & (df['胜'] == row['胜']) & (df['平'] == row['平'])]
         total = len(result0)
         if total < 2:
-            print("历史样本不足:",total,'场')
+            st.write("历史样本不足:",total,'场')
         elif total >= 2 and total < 8:
             temp = df[(df['H'].notnull()) & (df['胜'] == row['负']) & (df['平'] == row['平'])]
             mixed = pd.concat([result0, temp], axis=0)
@@ -493,11 +494,11 @@ def search(df, path, opt1):
                 down.append(p_down)
                 
             if len(temp)==0:
-                print("按胜平负匹配历史比赛",total,"场")
+                st.write("按胜平负匹配历史比赛",total,"场")
                 calc_prob(home, away, deep, result0, total)
             else:
-                print("按双向胜平负匹配历史比赛",mix_total,"场")
-                print("上盘概率:",round(p_uppr,2),'%',"下盘概率:",round(p_down,2),'%')
+                st.write("按双向胜平负匹配历史比赛",mix_total,"场")
+                st.write("上盘概率:",round(p_uppr,2),'%',"下盘概率:",round(p_down,2),'%')
                 
             if mix_total >= 8:
                 m_result1 = mixed[(mixed['盘口数字'] <= row['盘口数字']+0.25) & (mixed['盘口数字'] >= row['盘口数字']-0.25)]
@@ -506,7 +507,7 @@ def search(df, path, opt1):
                 m_result.drop_duplicates(subset=['比赛'], keep='first', inplace=True)
                 total = len(m_result)
                 if total > 0:
-                    print("按双向模糊盘口匹配历史比赛",total,"场")
+                    st.write("按双向模糊盘口匹配历史比赛",total,"场")
                     temp_home = m_result[m_result['盘口'].str.contains('\-')]
                     temp_away = m_result[m_result['盘口'].str.contains('\+')]
                     if deep:
@@ -515,7 +516,7 @@ def search(df, path, opt1):
                     else:
                         p_uppr = ((len(temp_home[temp_home['H'] > temp_home['A']])+len(temp_away[temp_away['H'] < temp_away['A']])+1)/(total+2))*100
                         p_down = 100-p_uppr
-                    print("上盘概率:",round(p_uppr,2),'%',"下盘概率:",round(p_down,2),'%')
+                    st.write("上盘概率:",round(p_uppr,2),'%',"下盘概率:",round(p_down,2),'%')
                     if total >= 5:
                         uppr.append(p_uppr)
                         down.append(p_down)
@@ -524,7 +525,7 @@ def search(df, path, opt1):
                     m_result3 = m_result[(m_result['盘口数字'] == row['盘口数字']) | (m_result['盘口数字'] == row['盘口数字']*(-1))]
                     total = len(m_result3)
                     if total > 0:
-                        print("按双向精确盘口匹配历史比赛",total,"场")
+                        st.write("按双向精确盘口匹配历史比赛",total,"场")
                         temp_home = m_result3[m_result3['盘口'].str.contains('\-')]
                         temp_away = m_result3[m_result3['盘口'].str.contains('\+')]
                         if deep:
@@ -533,14 +534,14 @@ def search(df, path, opt1):
                         else:
                             p_uppr = ((len(temp_home[temp_home['H'] > temp_home['A']])+len(temp_away[temp_away['H'] < temp_away['A']])+1)/(total+2))*100
                             p_down = 100-p_uppr
-                        print("上盘概率:",round(p_uppr,2),'%',"下盘概率:",round(p_down,2),'%')
+                        st.write("上盘概率:",round(p_uppr,2),'%',"下盘概率:",round(p_down,2),'%')
                         if total >= 5:
                             uppr.append(p_uppr)
                             down.append(p_down)
               
         else:
             roll = True
-            print("按胜平负匹配历史比赛",total,"场")
+            st.write("按胜平负匹配历史比赛",total,"场")
             temp, signal, num_miss = calc_prob(home, away, deep, result0, total)
             temp_miss.append(num_miss)
             temp = laplace(temp, total)
@@ -559,7 +560,7 @@ def search(df, path, opt1):
                 result1 = result0[result0['盘口'].str.contains('\+', na=True)]
             total = len(result1)
             if total > 0:
-                print("按让球方匹配历史比赛",total,"场")
+                st.write("按让球方匹配历史比赛",total,"场")
                 temp, signal, num_miss = calc_prob(home, away, deep, result1, total)
                 temp_miss.append(num_miss)
                 temp = laplace(temp, total)
@@ -578,7 +579,7 @@ def search(df, path, opt1):
             result2 = result1[result1['让负'] == row['让负']]
             total = len(result2)
             if total >= 5:
-                print("按让负匹配历史比赛",total,"场")
+                st.write("按让负匹配历史比赛",total,"场")
                 temp, signal, num_miss = calc_prob(home, away, deep, result2, total)
                 temp_miss.append(num_miss)
                 temp = laplace(temp, total)
@@ -590,7 +591,7 @@ def search(df, path, opt1):
             result2 = result1[result1['让胜'] == row['让胜']]
             total = len(result2)
             if total >= 5:
-                print("按让胜匹配历史比赛",total,"场")
+                st.write("按让胜匹配历史比赛",total,"场")
                 temp, signal, num_miss = calc_prob(home, away, deep, result2, total)
                 temp_miss.append(num_miss)
                 temp = laplace(temp, total)
@@ -604,7 +605,7 @@ def search(df, path, opt1):
             result3 = result2[(result2['盘口数字'] >= row['盘口数字']-0.25) & (result2['盘口数字'] <= row['盘口数字']+0.25)]
             total = len(result3)
             if total > 0:
-                print("按模糊盘口匹配历史比赛",total,"场")
+                st.write("按模糊盘口匹配历史比赛",total,"场")
                 temp, signal, num_miss = calc_prob(home, away, deep, result3, total)
                 temp_miss.append(num_miss)
                 temp = laplace(temp, total)
@@ -619,7 +620,7 @@ def search(df, path, opt1):
             result4 = result3[result3['盘口数字'] == row['盘口数字']]
             total = len(result4)
             if total > 0:
-                print("按精确盘口匹配历史比赛",total,"场")
+                st.write("按精确盘口匹配历史比赛",total,"场")
                 temp, signal, num_miss = calc_prob(home, away, deep, result4, total)
                 temp_miss.append(num_miss)
                 temp = laplace(temp, total)
@@ -634,7 +635,7 @@ def search(df, path, opt1):
             avg_uppr.append(best_prob)
             avg_down.append(100-best_prob)
             uppr_count = analysis(best_prob, uppr_count)
-            print('综合分析看好上盘获胜，概率：',round(best_prob,2),'%')
+            st.write('综合分析看好上盘获胜，概率：',round(best_prob,2),'%')
         elif mean(down) > mean(uppr):
             best_prob = max(down)
             if temp_miss:
@@ -642,10 +643,10 @@ def search(df, path, opt1):
             avg_down.append(best_prob)
             avg_uppr.append(100-best_prob)
             down_count = analysis(best_prob, down_count)
-            print('综合分析看好下盘获胜，概率：',round(best_prob,2),'%')
+            st.write('综合分析看好下盘获胜，概率：',round(best_prob,2),'%')
         else:
-            print('建议放弃')
-        print('\n')
+            st.write('建议放弃')
+        st.write('\n')
         
         #收集推荐比分
         temp_score = row['比分'].split(' ')
@@ -705,13 +706,13 @@ def search(df, path, opt1):
                 
                 if avg_best >= 60 and uppr_count[2] > 0:
                     worksheet.write(x, y+4, '新发现！！！五星级上盘模型') 
-                    print('新发现！！！五星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！！！五星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and uppr_count[1] > 0:
                     worksheet.write(x, y+4, '新发现！！四星级上盘模型')
-                    print('新发现！！四星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！！四星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((uppr_count[0] > 1) or (uppr_count[1] > 0) or (uppr_count[2] > 0)):
                     worksheet.write(x, y+4, '新发现！三星级上盘模型')
-                    print('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 x += 1
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
@@ -747,15 +748,15 @@ def search(df, path, opt1):
                     
                 if avg_best >= 60 and down_count[2] > 0:
                     worksheet.write(x, y+4, '新发现！！！五星级下盘模型')                    
-                    print('新发现！！！五星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！！！五星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and down_count[1] > 0:
                     worksheet.write(x, y+4, '新发现！！四星级下盘模型')
-                    print('新发现！！四星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！！四星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((down_count[0] > 1) or (down_count[1] > 0) or (down_count[2] > 0)):
                     worksheet.write(x, y+4, '新发现！三星级下盘模型')
-                    print('新发现！三星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                    st.write('新发现！三星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 x += 1
-            print('=============================================')
+            st.write('=============================================')
         #提取赛果并储存
         if history:
             scoreline = re.findall('[0-9]+', row['比赛'])
