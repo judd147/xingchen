@@ -10,7 +10,6 @@ Last Edit 4/13/2022
 """
 import pandas as pd
 from numpy import mean
-import xlsxwriter
 import re
 from collections import Counter
 import streamlit as st
@@ -35,7 +34,7 @@ def main():
             df = read_file(url)
         st.write(df.tail(num_show))
         search(df, path, False)
-        st.success('已导出结果文件至'+path)
+        st.success('运行成功！')
     elif file and path and run:
         with st.spinner("加载数据中..."):
             df = read_file(file)
