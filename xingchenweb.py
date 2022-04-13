@@ -285,7 +285,8 @@ def search(df, path, opt1):
     history = False
     if opt1:
         history = True
-    dfb = pd.DataFrame(columns=['联赛','比赛','让球方','盘口','模型','平均概率','最长遗漏','高频比分','频率','算法数量','正误','注释'])    
+    dfb = pd.DataFrame(columns=['联赛','比赛','让球方','盘口','模型','平均概率','最长遗漏','高频比分','频率','算法数量','正误','注释'])
+    #dfb = dfb.append({'联赛': 0, '比赛': 1, '让球方': 2, '盘口': 3, '模型': 4, '平均概率': 5, '最长遗漏': 6, '高频比分': 7, '频率': 8, '算法数量': 9, '正误': 10, '注释': 11}, ignore_index=True)
     
     #创建新工作簿以写入结果
     wb = xlsxwriter.Workbook(path+'\\result.xlsx')
@@ -360,8 +361,10 @@ def search(df, path, opt1):
                 worksheet.write(x, y, liga)
                 worksheet.write(x, y+1, prev)
                 if home:
+                    side = '主让'
                     worksheet.write(x, y+2, '主让')
                 elif away:
+                    side = '客让'
                     worksheet.write(x, y+2, '客让')
                 worksheet.write(x, y+3, hand)
                 worksheet.write(x, y+5, str(round(avg_best,2))+'%')
@@ -373,20 +376,26 @@ def search(df, path, opt1):
                 if history:
                     TF = judge(new_score, num_hand, home, away, deep, 'uppr')
                     if TF:
+                        outcome = '\u2714'
                         worksheet.write(x, y+10, '\u2714')
                     else:
+                        outcome = '\u2716'
                         worksheet.write(x, y+10, '\u2716')
                 
                 if avg_best >= 60 and uppr_count[2] > 0:
+                    model = '新发现！！！五星级上盘模型'
                     worksheet.write(x, y+4, '新发现！！！五星级上盘模型') 
                     st.write('新发现！！！五星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and uppr_count[1] > 0:
+                    model = '新发现！！四星级上盘模型'
                     worksheet.write(x, y+4, '新发现！！四星级上盘模型')
                     st.write('新发现！！四星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((uppr_count[0] > 1) or (uppr_count[1] > 0) or (uppr_count[2] > 0)):
+                    model = '新发现！三星级上盘模型'
                     worksheet.write(x, y+4, '新发现！三星级上盘模型')
                     st.write('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 x += 1
+                dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': max(upprmiss), '高频比分': line, '频率': freq, '算法数量': str(sum(uppr_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
                 #注释和批注
