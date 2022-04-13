@@ -727,7 +727,7 @@ def search(df, path, opt1):
             new_score = [int(s) for s in scoreline]
             df.loc[index, 'H'] = new_score[0]
             df.loc[index, 'A'] = new_score[1]
-    dfb
+    st.table(dfb)
     
 if __name__ == "__main__":
     main()
