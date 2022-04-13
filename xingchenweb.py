@@ -731,6 +731,8 @@ def search(df, path, opt1):
             df.loc[index, 'H'] = new_score[0]
             df.loc[index, 'A'] = new_score[1]
     st.table(dfb)
+    if history:
+        dfb.to_excel(path+'\\result.xlsx')
     
 if __name__ == "__main__":
     main()
