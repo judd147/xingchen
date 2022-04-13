@@ -350,6 +350,8 @@ def search(df, path, opt1):
                         outcome = '\u2714'
                     else:
                         outcome = '\u2716'
+                else:
+                    outcome = ''
                 
                 if avg_best >= 60 and uppr_count[2] > 0:
                     model = '新发现！！！五星级上盘模型'
@@ -386,6 +388,8 @@ def search(df, path, opt1):
                         outcome = '\u2714'
                     else:
                         outcome = '\u2716'
+                else:
+                    outcome = ''
                     
                 if avg_best >= 60 and down_count[2] > 0:
                     model = '新发现！！！五星级下盘模型'                    
@@ -665,6 +669,8 @@ def search(df, path, opt1):
                         outcome = '\u2714'
                     else:
                         outcome = '\u2716'
+                else:
+                    outcome = ''
                 
                 if avg_best >= 60 and uppr_count[2] > 0:
                     model = '新发现！！！五星级上盘模型'
@@ -701,6 +707,8 @@ def search(df, path, opt1):
                         outcome = '\u2714'
                     else:
                         outcome = '\u2716'
+                else:
+                    outcome = ''
                     
                 if avg_best >= 60 and down_count[2] > 0:
                     model = '新发现！！！五星级下盘模型'                    
