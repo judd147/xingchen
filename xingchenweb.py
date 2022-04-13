@@ -328,8 +328,8 @@ def search(df, path, opt1):
             #上盘
             if sum(uppr_count)/algo > 0.5 and algo > 1:
                 #注释和批注
+                com_str = ''
                 if comment:
-                    com_str = ''
                     for item in comment:
                         item = str(item)
                         com_str += str(item + ",")
@@ -366,8 +366,8 @@ def search(df, path, opt1):
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
                 #注释和批注
+                com_str = ''
                 if comment:
-                    com_str = ''
                     for item in comment:
                         item = str(item)
                         com_str += str(item + ",")
@@ -647,8 +647,8 @@ def search(df, path, opt1):
             #上盘
             if sum(uppr_count)/algo > 0.5 and algo > 1:
                 #注释和批注
+                com_str = ''
                 if comment:
-                    com_str = ''
                     for item in comment:
                         item = str(item)
                         com_str += str(item + ",")
@@ -685,8 +685,8 @@ def search(df, path, opt1):
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
                 #注释和批注
+                com_str = ''
                 if comment:
-                    com_str = ''
                     for item in comment:
                         item = str(item)
                         com_str += str(item + ",")
