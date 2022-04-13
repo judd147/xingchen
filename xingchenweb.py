@@ -3,9 +3,9 @@
 Liyao Zhang
 
 Start Date 4/4/2022
-Last Edit 4/12/2022
+Last Edit 4/13/2022
 
-星辰智盈自动回测系统 with Streamlit V2.0
+星辰智盈自动回测系统 with Streamlit
 
 """
 import pandas as pd
@@ -286,27 +286,6 @@ def search(df, path, opt1):
     if opt1:
         history = True
     dfb = pd.DataFrame(columns=['联赛','比赛','让球方','盘口','模型','平均概率','最长遗漏','高频比分','频率','算法数量','正误','注释'])
-    #dfb = dfb.append({'联赛': 0, '比赛': 1, '让球方': 2, '盘口': 3, '模型': 4, '平均概率': 5, '最长遗漏': 6, '高频比分': 7, '频率': 8, '算法数量': 9, '正误': 10, '注释': 11}, ignore_index=True)
-    
-    #创建新工作簿以写入结果
-    wb = xlsxwriter.Workbook(path+'\\result.xlsx')
-    worksheet = wb.add_worksheet("My sheet")
-    x = 0
-    y = 0
-    worksheet.write(x, y, '联赛')
-    worksheet.write(x, y+1, '比赛')
-    worksheet.write(x, y+2, '让球方')
-    worksheet.write(x, y+3, '盘口')
-    worksheet.write(x, y+4, '模型')
-    worksheet.write(x, y+5, '平均概率')
-    worksheet.write(x, y+6, '最长遗漏')
-    worksheet.write(x, y+7, '高频比分')
-    worksheet.write(x, y+8, '频率')
-    worksheet.write(x, y+9, '算法数量')
-    if history:
-        worksheet.write(x, y+10, '正误')
-    worksheet.write(x, y+11, '注释')
-    x += 1
     
     #储存每一行信息的变量
     liga = '中甲'
@@ -355,46 +334,32 @@ def search(df, path, opt1):
                         item = str(item)
                         com_str += str(item + ",")
                     com_str = com_str[:-1]
-                    worksheet.write(x, y+11, com_str)
                 #写入上盘信息
                 avg_best = mean(avg_uppr)
-                worksheet.write(x, y, liga)
-                worksheet.write(x, y+1, prev)
                 if home:
                     side = '主让'
-                    worksheet.write(x, y+2, '主让')
                 elif away:
                     side = '客让'
-                    worksheet.write(x, y+2, '客让')
-                worksheet.write(x, y+3, hand)
-                worksheet.write(x, y+5, str(round(avg_best,2))+'%')
                 if upprmiss:
-                    worksheet.write(x, y+6, max(upprmiss))
-                worksheet.write(x, y+7, line)
-                worksheet.write(x, y+8, freq)
-                worksheet.write(x, y+9, str(sum(uppr_count))+'/'+str(algo))
+                    pass
+                    #worksheet.write(x, y+6, max(upprmiss))
+            
                 if history:
                     TF = judge(new_score, num_hand, home, away, deep, 'uppr')
                     if TF:
                         outcome = '\u2714'
-                        worksheet.write(x, y+10, '\u2714')
                     else:
                         outcome = '\u2716'
-                        worksheet.write(x, y+10, '\u2716')
                 
                 if avg_best >= 60 and uppr_count[2] > 0:
                     model = '新发现！！！五星级上盘模型'
-                    worksheet.write(x, y+4, '新发现！！！五星级上盘模型') 
                     st.write('新发现！！！五星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and uppr_count[1] > 0:
                     model = '新发现！！四星级上盘模型'
-                    worksheet.write(x, y+4, '新发现！！四星级上盘模型')
                     st.write('新发现！！四星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((uppr_count[0] > 1) or (uppr_count[1] > 0) or (uppr_count[2] > 0)):
                     model = '新发现！三星级上盘模型'
-                    worksheet.write(x, y+4, '新发现！三星级上盘模型')
                     st.write('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
-                x += 1
                 dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': max(upprmiss), '高频比分': line, '频率': freq, '算法数量': str(sum(uppr_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
@@ -405,39 +370,33 @@ def search(df, path, opt1):
                         item = str(item)
                         com_str += str(item + ",")
                     com_str = com_str[:-1]
-                    worksheet.write(x, y+11, com_str)
                 #写入下盘信息
                 avg_best = mean(avg_down)
-                worksheet.write(x, y, liga)
-                worksheet.write(x, y+1, prev)
                 if home:
-                    worksheet.write(x, y+2, '主让')
+                    side = '主让'
                 elif away:
-                    worksheet.write(x, y+2, '客让')
-                worksheet.write(x, y+3, hand)
-                worksheet.write(x, y+5, str(round(avg_best,2))+'%')
+                    side = '客让'
                 if downmiss:
-                    worksheet.write(x, y+6, max(downmiss))
-                worksheet.write(x, y+7, line)
-                worksheet.write(x, y+8, freq)
-                worksheet.write(x, y+9, str(sum(down_count))+'/'+str(algo))
+                    pass
+                    #worksheet.write(x, y+6, max(downmiss))
+                    
                 if history:
                     TF = judge(new_score, num_hand, home, away, deep, 'down')
                     if TF:
-                        worksheet.write(x, y+10, '\u2714')
+                        outcome = '\u2714'
                     else:
-                        worksheet.write(x, y+10, '\u2716')
+                        outcome = '\u2716'
                     
                 if avg_best >= 60 and down_count[2] > 0:
-                    worksheet.write(x, y+4, '新发现！！！五星级下盘模型')                    
+                    model = '新发现！！！五星级下盘模型'                    
                     st.write('新发现！！！五星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and down_count[1] > 0:
-                    worksheet.write(x, y+4, '新发现！！四星级下盘模型')
+                    model = '新发现！！四星级下盘模型'
                     st.write('新发现！！四星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((down_count[0] > 1) or (down_count[1] > 0) or (down_count[2] > 0)):
-                    worksheet.write(x, y+4, '新发现！三星级下盘模型')
+                    model = '新发现！三星级下盘模型'
                     st.write('新发现！三星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
-                x += 1
+                dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': max(downmiss), '高频比分': line, '频率': freq, '算法数量': str(sum(down_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             st.write('=============================================')
             #重置上一场比赛信息
             algo = 1
@@ -690,39 +649,33 @@ def search(df, path, opt1):
                         item = str(item)
                         com_str += str(item + ",")
                     com_str = com_str[:-1]
-                    worksheet.write(x, y+11, com_str)
                 #写入上盘信息
                 avg_best = mean(avg_uppr)
-                worksheet.write(x, y, liga)
-                worksheet.write(x, y+1, prev)
                 if home:
-                    worksheet.write(x, y+2, '主让')
+                    side = '主让'
                 elif away:
-                    worksheet.write(x, y+2, '客让')
-                worksheet.write(x, y+3, hand)
-                worksheet.write(x, y+5, str(round(avg_best,2))+'%')
+                    side = '客让'
                 if upprmiss:
-                    worksheet.write(x, y+6, max(upprmiss))
-                worksheet.write(x, y+7, line)
-                worksheet.write(x, y+8, freq)
-                worksheet.write(x, y+9, str(sum(uppr_count))+'/'+str(algo))
+                    pass
+                    #worksheet.write(x, y+6, max(upprmiss))
+            
                 if history:
                     TF = judge(new_score, num_hand, home, away, deep, 'uppr')
                     if TF:
-                        worksheet.write(x, y+10, '\u2714')
+                        outcome = '\u2714'
                     else:
-                        worksheet.write(x, y+10, '\u2716')
+                        outcome = '\u2716'
                 
                 if avg_best >= 60 and uppr_count[2] > 0:
-                    worksheet.write(x, y+4, '新发现！！！五星级上盘模型') 
+                    model = '新发现！！！五星级上盘模型'
                     st.write('新发现！！！五星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and uppr_count[1] > 0:
-                    worksheet.write(x, y+4, '新发现！！四星级上盘模型')
+                    model = '新发现！！四星级上盘模型'
                     st.write('新发现！！四星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((uppr_count[0] > 1) or (uppr_count[1] > 0) or (uppr_count[2] > 0)):
-                    worksheet.write(x, y+4, '新发现！三星级上盘模型')
+                    model = '新发现！三星级上盘模型'
                     st.write('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
-                x += 1
+                dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': max(upprmiss), '高频比分': line, '频率': freq, '算法数量': str(sum(uppr_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
                 #注释和批注
@@ -732,39 +685,33 @@ def search(df, path, opt1):
                         item = str(item)
                         com_str += str(item + ",")
                     com_str = com_str[:-1]
-                    worksheet.write(x, y+11, com_str)
                 #写入下盘信息
                 avg_best = mean(avg_down)
-                worksheet.write(x, y, liga)
-                worksheet.write(x, y+1, prev)
                 if home:
-                    worksheet.write(x, y+2, '主让')
+                    side = '主让'
                 elif away:
-                    worksheet.write(x, y+2, '客让')
-                worksheet.write(x, y+3, hand)
-                worksheet.write(x, y+5, str(round(avg_best,2))+'%')
+                    side = '客让'
                 if downmiss:
-                    worksheet.write(x, y+6, max(downmiss))
-                worksheet.write(x, y+7, line)
-                worksheet.write(x, y+8, freq)
-                worksheet.write(x, y+9, str(sum(down_count))+'/'+str(algo))
+                    pass
+                    #worksheet.write(x, y+6, max(downmiss))
+                    
                 if history:
                     TF = judge(new_score, num_hand, home, away, deep, 'down')
                     if TF:
-                        worksheet.write(x, y+10, '\u2714')
+                        outcome = '\u2714'
                     else:
-                        worksheet.write(x, y+10, '\u2716')
+                        outcome = '\u2716'
                     
                 if avg_best >= 60 and down_count[2] > 0:
-                    worksheet.write(x, y+4, '新发现！！！五星级下盘模型')                    
+                    model = '新发现！！！五星级下盘模型'                    
                     st.write('新发现！！！五星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif avg_best >= 60 and down_count[1] > 0:
-                    worksheet.write(x, y+4, '新发现！！四星级下盘模型')
+                    model = '新发现！！四星级下盘模型'
                     st.write('新发现！！四星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
                 elif (avg_best >= 50) and ((down_count[0] > 1) or (down_count[1] > 0) or (down_count[2] > 0)):
-                    worksheet.write(x, y+4, '新发现！三星级下盘模型')
+                    model = '新发现！三星级下盘模型'
                     st.write('新发现！三星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
-                x += 1
+                dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': max(downmiss), '高频比分': line, '频率': freq, '算法数量': str(sum(down_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             st.write('=============================================')
         #提取赛果并储存
         if history:
@@ -772,7 +719,6 @@ def search(df, path, opt1):
             new_score = [int(s) for s in scoreline]
             df.loc[index, 'H'] = new_score[0]
             df.loc[index, 'A'] = new_score[1]
-    wb.close()
     dfb
     
 if __name__ == "__main__":
