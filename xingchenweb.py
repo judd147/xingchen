@@ -773,6 +773,7 @@ def search(df, path, opt1):
             df.loc[index, 'H'] = new_score[0]
             df.loc[index, 'A'] = new_score[1]
     wb.close()
+    dfb
     
 if __name__ == "__main__":
     main()
