@@ -3,7 +3,7 @@
 Liyao Zhang
 
 Start Date 4/4/2022
-Last Edit 4/13/2022
+Last Edit 9/17/2022
 
 星辰智盈自动回测系统 with Streamlit
 
@@ -362,6 +362,8 @@ def search(df, path, opt1):
                 elif (avg_best >= 50) and ((uppr_count[0] > 1) or (uppr_count[1] > 0) or (uppr_count[2] > 0)):
                     model = '新发现！三星级上盘模型'
                     st.write('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                else:
+                    model = ''
                 dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': num_miss, '高频比分': line, '频率': freq, '算法数量': str(sum(uppr_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
@@ -401,6 +403,8 @@ def search(df, path, opt1):
                 elif (avg_best >= 50) and ((down_count[0] > 1) or (down_count[1] > 0) or (down_count[2] > 0)):
                     model = '新发现！三星级下盘模型'
                     st.write('新发现！三星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                else:
+                    model = ''
                 dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': num_miss, '高频比分': line, '频率': freq, '算法数量': str(sum(down_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             st.write('=============================================')
             #重置上一场比赛信息
@@ -683,6 +687,8 @@ def search(df, path, opt1):
                 elif (avg_best >= 50) and ((uppr_count[0] > 1) or (uppr_count[1] > 0) or (uppr_count[2] > 0)):
                     model = '新发现！三星级上盘模型'
                     st.write('新发现！三星级上盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                else:
+                    model = ''
                 dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': num_miss, '高频比分': line, '频率': freq, '算法数量': str(sum(uppr_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             #下盘
             elif sum(down_count)/algo > 0.5 and algo > 1:
@@ -722,6 +728,8 @@ def search(df, path, opt1):
                 elif (avg_best >= 50) and ((down_count[0] > 1) or (down_count[1] > 0) or (down_count[2] > 0)):
                     model = '新发现！三星级下盘模型'
                     st.write('新发现！三星级下盘模型：',prev,'平均概率',round(avg_best,2),'%')
+                else:
+                    model = ''
                 dfb = dfb.append({'联赛': liga, '比赛': prev, '让球方': side, '盘口': hand, '模型': model, '平均概率': str(round(avg_best,2))+'%', '最长遗漏': num_miss, '高频比分': line, '频率': freq, '算法数量': str(sum(down_count))+'/'+str(algo), '正误': outcome, '注释': com_str}, ignore_index=True)
             st.write('=============================================')
         #提取赛果并储存
