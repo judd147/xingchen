@@ -11,6 +11,8 @@ Last Edit 9/17/2022
 import pandas as pd
 from numpy import mean
 import re
+import io
+from datetime import datetime
 from collections import Counter
 import streamlit as st
 import base64
@@ -739,8 +741,18 @@ def search(df, path, opt1):
             df.loc[index, 'H'] = new_score[0]
             df.loc[index, 'A'] = new_score[1]
     st.table(dfb)
-    if history:
-        dfb.to_excel(path+'\\result.xlsx', index=False)
+    #下载数据
+    buffer = io.BytesIO()
+    today = datetime.today()
+    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+        dfb.to_excel(writer, index=False)
+        writer.save()
+        st.download_button(
+            label="下载结果",
+            data=buffer,
+            file_name="回测结果_"+today.strftime('%m-%d')+".xlsx",
+            mime="application/vnd.ms-excel"
+        )
     
 if __name__ == "__main__":
     main()
