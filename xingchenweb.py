@@ -3,7 +3,7 @@
 Liyao Zhang
 
 Start Date 4/4/2022
-Last Edit 9/17/2022
+Last Edit 10/7/2022
 
 星辰智盈自动回测系统 with Streamlit
 
@@ -741,18 +741,6 @@ def search(df, path, opt1):
             df.loc[index, 'H'] = new_score[0]
             df.loc[index, 'A'] = new_score[1]
     st.table(dfb)
-    #下载数据
-    buffer = io.BytesIO()
-    today = datetime.today()
-    with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-        dfb.to_excel(writer, index=False)
-        writer.save()
-        st.download_button(
-            label="下载结果",
-            data=buffer,
-            file_name="回测结果_"+today.strftime('%m-%d')+".xlsx",
-            mime="application/vnd.ms-excel"
-        )
     
 if __name__ == "__main__":
     main()
