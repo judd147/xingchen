@@ -3,24 +3,27 @@
 Liyao Zhang
 
 Start Date 4/4/2022
-Last Edit 10/7/2022
+Last Edit 11/11/2022
 
 星辰智盈自动回测系统 with Streamlit
-
 """
-import pandas as pd
-from numpy import mean
+
 import re
 import io
-from datetime import datetime
-from collections import Counter
-import streamlit as st
 import base64
+import pandas as pd
+import streamlit as st
+from numpy import mean
+from collections import Counter
 
 def main():
-    st.title("欢迎使用星辰智盈自动回测系统")
-    source = st.radio("选择数据源", ["本地文件", "OneDrive"])
-    path = st.text_input("结果导出文件夹", value=r'C:\Users\张力铫\Desktop')
+    st.set_page_config(
+    page_title="星辰数据回测",
+    page_icon="📊",
+    #initial_sidebar_state="expanded"
+    )
+    st.title("星辰智盈自动回测系统")
+    source = st.radio("选择数据源", ["OneDrive","本地文件"])
     file = None
     if source == '本地文件':
         file = st.file_uploader("上传数据库文件", type='xlsx')
@@ -29,19 +32,19 @@ def main():
         num_show = st.number_input('数据显示行数', min_value=1, max_value=100, value=20, key='show')
     run = st.button('运行')
     
-    if source == 'OneDrive' and path and run:
+    if source == 'OneDrive' and run:
         onedrive_link = 'https://1drv.ms/x/s!Ag9ZvloaJitBjy_eATdsL7-B6G0m?e=hk8yWv'
         with st.spinner("加载数据中..."):
             url = create_onedrive_directdownload(onedrive_link)
             df = read_file(url)
         st.write(df.tail(num_show))
-        search(df, path, False)
+        search(df, False)
         st.success('运行成功！')
-    elif file and path and run:
+    elif file and run:
         with st.spinner("加载数据中..."):
             df = read_file(file)
-        search(df, path, opt1)
-        st.success('已导出结果文件至'+path)   
+        search(df, opt1)
+        st.success('运行成功！')
 
 # *** 连接层函数 *** #    
 def create_onedrive_directdownload(onedrive_link):
@@ -282,7 +285,7 @@ def score_freq(score):
     return line, freq
     
 # 回测主函数
-def search(df, path, opt1):
+def search(df, opt1):
     history = False
     if opt1:
         history = True
