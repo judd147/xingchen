@@ -2,3 +2,4 @@ name: xingchen
 dependencies:
   - xlsxwriter
   - openpyxl
+  - plotly
