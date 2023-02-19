@@ -3,9 +3,9 @@
 Liyao Zhang
 
 Start Date 4/4/2022
-Last Edit 2/4/2023
+Last Edit 2/19/2023
 
-星辰智盈自动回测系统 with Streamlit
+星辰智盈自动回测系统 with Streamlit Cloud
 """
 
 import re
@@ -16,6 +16,7 @@ import streamlit as st
 import plotly.express as px
 from numpy import mean
 from collections import Counter
+from datetime import datetime, timedelta
 
 def main():
     st.set_page_config(
@@ -38,6 +39,12 @@ def main():
     df_history = load_history()
     load_dashboard(df_history)
     
+    #加载最新数据表
+    onedrive_link = 'https://1drv.ms/x/s!Ag9ZvloaJitBjy_eATdsL7-B6G0m?e=hk8yWv'
+    with st.spinner("加载数据中..."):
+        url = create_onedrive_directdownload(onedrive_link)
+        df_latest = read_file(url)
+    
     #查询球队历史战绩
     with st.form("search_history"):
         team2search = st.text_input('输入球队名称', help='用于查询球队历史战绩')
@@ -52,7 +59,67 @@ def main():
                 df_team_history = df_temp_teams[df_temp_teams['team']==(team2search)].iloc[0:,:12]
             with st.expander('球队历史战绩', expanded=True):
                 st.dataframe(df_team_history, width=1000)
-    
+                
+    #储存用户输入数据
+    with st.expander("用户输入数据", expanded=False):
+        num_games = st.number_input('添加比赛数量', step=1)
+        
+        today = datetime.today()
+        today_modified = today.replace(minute=0, second=0, microsecond=0)
+        col_time1, col_time2 = st.columns(2)
+        with col_time1:
+            start_time = st.slider(
+                "开始时间",
+                value=today_modified,
+                min_value=today_modified - timedelta(hours=2),
+                max_value=today_modified + timedelta(hours=2),
+                step=timedelta(minutes=15),
+                format="MM/DD - HH:mm")
+        with col_time2:
+            end_time = st.slider(
+                "结束时间",
+                value=today_modified,
+                min_value=today_modified - timedelta(hours=2),
+                max_value=today_modified + timedelta(hours=2),
+                step=timedelta(minutes=15),
+                format="MM/DD - HH:mm")
+        df_select_by_time = df_latest[(df_latest['开球时间']>=start_time.strftime('%m-%d %H:%M'))&(df_latest['开球时间']<=end_time.strftime('%m-%d %H:%M'))&(df_latest['联赛'].str.contains('德甲|英超|西甲|法甲|意甲'))]
+        df_select_by_time
+        game_options = df_select_by_time['比赛'].unique()
+        liga_options = df_select_by_time['联赛'].unique()
+        
+        with st.form('user_data'):
+            for i in range(num_games):
+                st.subheader('比赛'+str(i+1))
+                col1, col2, col3 = st.columns(3)
+                algo = col1.selectbox('算法', options=['公平量价','赛前能量','联赛球探'], key=str(i)+'algo')
+                liga = col2.selectbox('联赛', options=liga_options, key=str(i)+'liga')
+                game = col3.selectbox('比赛', options=game_options, key=str(i)+'game')
+                col4, col5, col6 = st.columns(3)
+                win = col4.number_input('胜', key=str(i)+'win')
+                draw = col5.number_input('平', key=str(i)+'draw')
+                loss = col6.number_input('负', key=str(i)+'loss')
+                col7, col8, col9 = st.columns(3)
+                hand_win = col7.number_input('让胜', key=str(i)+'hand_win')
+                hand_draw = col8.number_input('让平', key=str(i)+'hand_draw')
+                hand_loss = col9.number_input('让负', key=str(i)+'hand_loss')
+                col10, col11, col12, col13 = st.columns(4)
+                hand = col10.text_input('盘口', key=str(i)+'hand')
+                comment = col11.selectbox('让球方', options=['-','+'], key=str(i)+'comment')
+                score = col12.text_input('比分', key=str(i)+'score')
+                jingcai = col13.selectbox('竞彩', options=['是',None], key=str(i)+'jingcai')
+                #与最新数据合并
+                df_latest = df_latest.append({'算法':algo, '联赛':liga, '比赛':game, '胜':win, '平':draw, '负':loss, '让胜':hand_win, '让平':hand_draw,
+                                              '让负':hand_loss, '盘口':hand, '注释':comment, '比分':score, '竞彩':jingcai}, ignore_index=True)
+                df_latest.loc[(df_latest['比赛']==game), '盘口'] = hand
+                df_latest = df_latest.sort_values(by=['开球时间','联赛','比赛'])
+                
+            save = st.form_submit_button('保存并运行')
+        if save:
+            dfb = search(df_latest, False)
+            st.dataframe(dfb)
+            st.success('运行成功！')
+
     #运行回测
     if source == 'OneDrive' and run:
         onedrive_link = 'https://1drv.ms/x/s!Ag9ZvloaJitBjy_eATdsL7-B6G0m?e=hk8yWv'
@@ -251,11 +318,13 @@ def create_onedrive_directdownload(onedrive_link):
     resultUrl = f"https://api.onedrive.com/v1.0/shares/u!{data_bytes64_String}/root/content"
     return resultUrl
 
+@st.experimental_memo
 def read_file(data):
     df = pd.read_excel(data, sheet_name = 1, converters = {'盘口': str, '竞彩': str, '比分': str})
     df['盘口数字'] = df['盘口'].astype(float)
     df['算法'] = df['算法'].fillna('球伯乐')
     df['注释'] = df['注释'].fillna('')
+    
     df['批注胜'] = df['批注胜'].fillna('')
     df['批注平'] = df['批注平'].fillna('')
     df['批注负'] = df['批注负'].fillna('')
@@ -828,21 +897,7 @@ def search(df, opt1):
         temp_score = tuple(temp_score)
         score += temp_score
         
-        #收集注释和批注
-        if row['算法'] == '球伯乐' and row['注释']:
-            comment.append(row['注释'])
-        if row['批注胜']:
-            comment.append('胜:'+row['批注胜'])
-        if row['批注平']:
-            comment.append('平:'+row['批注平'])
-        if row['批注负']:
-            comment.append('负:'+row['批注负'])
-        if row['批注让胜']:
-            comment.append('让胜:'+row['批注让胜'])
-        if row['批注让平']:
-            comment.append('让平:'+row['批注让平'])
-        if row['批注让负']:
-            comment.append('让负:'+row['批注让负'])
+        #收集注释和批注(deprecated)
         
         #处理最后一行        
         if index == df[df['H'].isnull() & df['盘口'].notnull()].index[-1]:
