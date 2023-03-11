@@ -71,7 +71,7 @@ def main():
         with col_time1:
             start_time = st.slider(
                 "开始时间",
-                value=today_modified,
+                value=today_modified + timedelta(hours=8),
                 min_value=today_modified + timedelta(hours=6),
                 max_value=today_modified + timedelta(hours=10),
                 step=timedelta(minutes=15),
@@ -79,7 +79,7 @@ def main():
         with col_time2:
             end_time = st.slider(
                 "结束时间",
-                value=today_modified,
+                value=today_modified + timedelta(hours=8),
                 min_value=today_modified + timedelta(hours=6),
                 max_value=today_modified + timedelta(hours=10),
                 step=timedelta(minutes=15),
