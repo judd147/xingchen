@@ -63,8 +63,6 @@ def main():
                 
     #储存用户输入数据
     with st.expander("用户输入数据", expanded=False):
-        num_games = st.number_input('添加比赛数量', step=1)
-        
         today = datetime.today()
         today_modified = today.replace(minute=0, second=0, microsecond=0)
         col_time1, col_time2 = st.columns(2)
@@ -85,40 +83,12 @@ def main():
                 step=timedelta(minutes=15),
                 format="MM/DD - HH:mm")
         df_select_by_time = df_latest[(df_latest['开球时间']>=start_time.strftime('%m-%d %H:%M'))&(df_latest['开球时间']<=end_time.strftime('%m-%d %H:%M'))&(df_latest['联赛'].str.contains('德甲|英超|西甲|法甲|意甲'))]
-        df_select_by_time
-        game_options = df_select_by_time['比赛'].unique()
-        liga_options = df_select_by_time['联赛'].unique()
-        
+               
         with st.form('user_data'):
-            for i in range(num_games):
-                st.subheader('比赛'+str(i+1))
-                col1, col2, col3 = st.columns(3)
-                algo = col1.selectbox('算法', options=['公平量价','赛前能量','联赛球探'], key=str(i)+'algo')
-                liga = col2.selectbox('联赛', options=liga_options, key=str(i)+'liga')
-                game = col3.selectbox('比赛', options=game_options, key=str(i)+'game')
-                col4, col5, col6 = st.columns(3)
-                win = col4.number_input('胜', key=str(i)+'win')
-                draw = col5.number_input('平', key=str(i)+'draw')
-                loss = col6.number_input('负', key=str(i)+'loss')
-                col7, col8, col9 = st.columns(3)
-                hand_win = col7.number_input('让胜', key=str(i)+'hand_win')
-                hand_draw = col8.number_input('让平', key=str(i)+'hand_draw')
-                hand_loss = col9.number_input('让负', key=str(i)+'hand_loss')
-                col10, col11, col12, col13 = st.columns(4)
-                hand = col10.text_input('盘口', key=str(i)+'hand')
-                comment = col11.selectbox('让球方', options=['-','+'], key=str(i)+'comment')
-                score = col12.text_input('比分', key=str(i)+'score')
-                jingcai = col13.selectbox('竞彩', options=['是',None], key=str(i)+'jingcai')
-                
-                #与最新数据合并
-                df_latest = df_latest.append({'算法':algo, '联赛':liga, '比赛':game, '胜':win, '平':draw, '负':loss, '让胜':hand_win, '让平':hand_draw,
-                                              '让负':hand_loss, '盘口':hand, '注释':comment, '比分':score, '竞彩':jingcai}, ignore_index=True)
-                df_latest.loc[(df_latest['比赛']==game), '盘口'] = hand
-                df_latest = df_latest.sort_values(by=['开球时间','联赛','比赛'])
-                df_latest
+            edited_df = st.experimental_data_editor(df)
             save = st.form_submit_button('保存并运行')
         if save:
-            dfb = search(df_latest, False)
+            dfb = search(edited_df, False)
             st.dataframe(dfb)
             st.success('运行成功！')
 
