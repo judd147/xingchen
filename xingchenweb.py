@@ -303,7 +303,7 @@ def remove_exclamation(text):
 
 # *** 连接层函数 *** #
 #onedrive
-@st.experimental_memo
+@st.cache_data
 def load_history():
     onedrive_link = 'https://1drv.ms/x/s!Ag9ZvloaJitBkDuTElufwa1jI6J4?e=pUIfze'
     url = create_onedrive_directdownload(onedrive_link)
@@ -319,7 +319,7 @@ def create_onedrive_directdownload(onedrive_link):
     resultUrl = f"https://api.onedrive.com/v1.0/shares/u!{data_bytes64_String}/root/content"
     return resultUrl
 
-@st.experimental_memo
+@st.cache_data
 def read_file(data):
     df = pd.read_excel(data, sheet_name = 1, converters = {'盘口': str, '竞彩': str, '比分': str})
     df['盘口数字'] = df['盘口'].astype(float)
