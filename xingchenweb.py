@@ -3,7 +3,7 @@
 Liyao Zhang
 
 Start Date 4/4/2022
-Last Edit 2/19/2023
+Last Edit 3/11/2023
 
 星辰智盈自动回测系统 with Streamlit Cloud
 """
@@ -65,7 +65,7 @@ def main():
     with st.expander("用户输入数据", expanded=False):
         num_games = st.number_input('添加比赛数量', step=1)
         
-        today = datetime.today(tzinfo=pytz.timezone('Asia/Shanghai'))
+        today = datetime(tzinfo=pytz.timezone('Asia/Shanghai')).today()
         today_modified = today.replace(minute=0, second=0, microsecond=0)
         col_time1, col_time2 = st.columns(2)
         with col_time1:
