@@ -115,6 +115,7 @@ def main():
                                               '让负':hand_loss, '盘口':hand, '注释':comment, '比分':score, '竞彩':jingcai}, ignore_index=True)
                 df_latest.loc[(df_latest['比赛']==game), '盘口'] = hand
                 df_latest = df_latest.sort_values(by=['开球时间','联赛','比赛'])
+                df_latest
             save = st.form_submit_button('保存并运行')
         if save:
             dfb = search(df_latest, False)
