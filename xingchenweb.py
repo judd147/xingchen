@@ -85,7 +85,7 @@ def main():
                 step=timedelta(minutes=15),
                 format="MM/DD - HH:mm")
         df_select_by_time = df_latest[(df_latest['开球时间']>=start_time.strftime('%m-%d %H:%M'))&(df_latest['开球时间']<=end_time.strftime('%m-%d %H:%M'))&(df_latest['联赛'].str.contains('德甲|英超|西甲|法甲|意甲'))]
-        df_select_by_time
+        edited_df = st.experimental_data_editor(df_select_by_time)
         game_options = df_select_by_time['比赛'].unique()
         liga_options = df_select_by_time['联赛'].unique()
         
@@ -117,7 +117,7 @@ def main():
                 
             save = st.form_submit_button('保存并运行')
         if save:
-            dfb = search(df_latest, False)
+            dfb = search(edited_df, False)
             st.dataframe(dfb)
             st.success('运行成功！')
 
