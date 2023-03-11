@@ -10,6 +10,7 @@ Last Edit 2/19/2023
 
 import re
 import io
+import pytz
 import base64
 import pandas as pd
 import streamlit as st
@@ -64,7 +65,7 @@ def main():
     with st.expander("用户输入数据", expanded=False):
         num_games = st.number_input('添加比赛数量', step=1)
         
-        today = datetime.today()
+        today = datetime.today(tzinfo=pytz.timezone('Asia/Shanghai'))
         today_modified = today.replace(minute=0, second=0, microsecond=0)
         col_time1, col_time2 = st.columns(2)
         with col_time1:
