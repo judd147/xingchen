@@ -65,23 +65,23 @@ def main():
     with st.expander("用户输入数据", expanded=False):
         num_games = st.number_input('添加比赛数量', step=1)
         
-        today = datetime(tzinfo=pytz.timezone('Asia/Shanghai')).today()
+        today = datetime.today()
         today_modified = today.replace(minute=0, second=0, microsecond=0)
         col_time1, col_time2 = st.columns(2)
         with col_time1:
             start_time = st.slider(
                 "开始时间",
                 value=today_modified,
-                min_value=today_modified - timedelta(hours=2),
-                max_value=today_modified + timedelta(hours=2),
+                min_value=today_modified + timedelta(hours=6),
+                max_value=today_modified + timedelta(hours=10),
                 step=timedelta(minutes=15),
                 format="MM/DD - HH:mm")
         with col_time2:
             end_time = st.slider(
                 "结束时间",
                 value=today_modified,
-                min_value=today_modified - timedelta(hours=2),
-                max_value=today_modified + timedelta(hours=2),
+                min_value=today_modified + timedelta(hours=6),
+                max_value=today_modified + timedelta(hours=10),
                 step=timedelta(minutes=15),
                 format="MM/DD - HH:mm")
         df_select_by_time = df_latest[(df_latest['开球时间']>=start_time.strftime('%m-%d %H:%M'))&(df_latest['开球时间']<=end_time.strftime('%m-%d %H:%M'))&(df_latest['联赛'].str.contains('德甲|英超|西甲|法甲|意甲'))]
