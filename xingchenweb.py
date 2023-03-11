@@ -109,14 +109,14 @@ def main():
                 comment = col11.selectbox('让球方', options=['-','+'], key=str(i)+'comment')
                 score = col12.text_input('比分', key=str(i)+'score')
                 jingcai = col13.selectbox('竞彩', options=['是',None], key=str(i)+'jingcai')
-                #与最新数据合并
-                df_latest = df_latest.append({'算法':algo, '联赛':liga, '比赛':game, '胜':win, '平':draw, '负':loss, '让胜':hand_win, '让平':hand_draw,
-                                              '让负':hand_loss, '盘口':hand, '注释':comment, '比分':score, '竞彩':jingcai}, ignore_index=True)
-                df_latest.loc[(df_latest['比赛']==game), '盘口'] = hand
-                df_latest = df_latest.sort_values(by=['开球时间','联赛','比赛'])
-                
+                               
             save = st.form_submit_button('保存并运行')
         if save:
+            #与最新数据合并
+            df_latest = df_latest.append({'算法':algo, '联赛':liga, '比赛':game, '胜':win, '平':draw, '负':loss, '让胜':hand_win, '让平':hand_draw,
+                                          '让负':hand_loss, '盘口':hand, '注释':comment, '比分':score, '竞彩':jingcai}, ignore_index=True)
+            df_latest.loc[(df_latest['比赛']==game), '盘口'] = hand
+            df_latest = df_latest.sort_values(by=['开球时间','联赛','比赛'])
             dfb = search(df_latest, False)
             st.dataframe(dfb)
             st.success('运行成功！')
