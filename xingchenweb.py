@@ -88,7 +88,7 @@ def main():
             edited_df = st.experimental_data_editor(df_select_by_time, num_rows='dynamic')
             save = st.form_submit_button('保存并运行')
         if save:
-            df_final = pd.concat(df_latest, edited_df)
+            df_final = pd.concat([df_latest, edited_df])
             dfb = search(df_final, False)
             st.dataframe(dfb)
             st.success('运行成功！')
