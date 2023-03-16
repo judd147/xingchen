@@ -10,7 +10,6 @@ Last Edit 3/16/2023
 
 import re
 import io
-import pytz
 import base64
 import pandas as pd
 import streamlit as st
@@ -41,7 +40,7 @@ def main():
     load_dashboard(df_history)
     
     #加载最新数据表
-    onedrive_link = 'https://1drv.ms/x/s!Ag9ZvloaJitBjy_eATdsL7-B6G0m?e=hk8yWv'
+    onedrive_link = 'https://1drv.ms/x/s!Ag9ZvloaJitBjy8YIdiLf5Wkr4O6?e=cwBjTO'
     with st.spinner("加载数据中..."):
         url = create_onedrive_directdownload(onedrive_link)
         df_latest = read_file(url)
